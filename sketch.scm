@@ -1,17 +1,14 @@
-(define-module (sketch)
+(define-module (my-guix sketch)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix download)
-  #:use-module (guix git-download)
-  #:use-module (guix gexp)
   #:use-module (guix build-system gnu)
-  #:use-module (guix build-system copy)
   #:use-module (guix utils)
   #:use-module (gnu packages java)
   #:use-module (gnu packages bison)
   #:use-module (gnu packages flex))
 
-(define sketch
+(define-public sketch
   (package
     (name "sketch")
     (version "1.7.6")
@@ -46,5 +43,3 @@ serves as an example of standard GNU coding practices.  As such, it supports
 command-line arguments, multiple languages, and so on.")
     (home-page "https://www.gnu.org/software/hello/")
     (license license:expat)))
-
-sketch
