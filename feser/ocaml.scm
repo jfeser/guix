@@ -4,7 +4,8 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system dune)
-  #:use-module (gnu packages ocaml))
+  #:use-module (gnu packages ocaml)
+  #:use-module (gnu packages databases))
 
 (define-public ocaml-intrinsics
   (package
