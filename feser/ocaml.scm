@@ -294,40 +294,6 @@ risk.")))
     (synopsis "Communicate with dune using rpc")
     (description "Library to connect and control a running dune instance")))
 
-(define ocaml-dune-private-libs
-  (package
-    (inherit dune)
-    (name "ocaml-dune-private-libs")
-    (build-system dune-build-system)
-    (propagated-inputs (list ocaml-csexp ocaml-pp ocaml-dyn ocaml-stdune))
-    (synopsis "Private libraries of Dune")
-    (description
-     "!!!!!!!!!!!!!!!!!!!!!! !!!!! DO NOT USE !!!!! !!!!!!!!!!!!!!!!!!!!!!
-
-This package contains code that is shared between various dune-xxx packages.
-However, it is not meant for public consumption and provides no stability
-guarantee.")))
-
-(define-public ocaml-dune-site
-  (package
-    (inherit dune)
-    (name "ocaml-dune-site")
-    (build-system dune-build-system)
-    (arguments
-     `(#:package "dune-site"
-                 #:tests? #f
-                 #:phases
-                 (modify-phases %standard-phases
-                   ;; When building dune, these directories are normally removed after
-                   ;; the bootstrap.
-                   (add-before 'build 'remove-vendor
-                     (lambda _
-                       (delete-file-recursively "vendor/csexp")
-                       (delete-file-recursively "vendor/pp"))))))
-    (propagated-inputs (list ocaml-dune-private-libs))
-    (synopsis "Embed locations informations inside executable and libraries")
-    (description #f)))
-
 (define-public ocaml-pprint
   (package
     (name "ocaml-pprint")
@@ -539,3 +505,127 @@ the command line tool `omd`.")
     (description
      "OCamlFormat is a tool to automatically format OCaml code in a uniform style.
 This package defines a RPC interface to OCamlFormat")))
+
+(define-public ocaml-visitors
+  (package
+    (name "ocaml-visitors")
+    (version "20210608")
+    (source (origin
+              (method url-fetch)
+              (uri
+               "https://gitlab.inria.fr/fpottier/visitors/-/archive/20210608/archive.tar.gz")
+              (sha256
+               (base32
+                "1yx4bjw4yw3zi35yfp66x320xgb9f8jh7rqj1j7hrrvn0f60m2y2"))))
+    (build-system dune-build-system)
+    (propagated-inputs (list ocaml-ppxlib ocaml-ppx-deriving ocaml-result))
+    (home-page "https://gitlab.inria.fr/fpottier/visitors")
+    (synopsis "An OCaml syntax extension for generating visitor classes")
+    (description
+     "Annotating an algebraic data type definition with [@@deriving visitors { ... }]
+causes visitor classes to be automatically generated.  A visitor is an object
+that knows how to traverse and transform a data structure.")
+    (license license:lgpl2.1)))
+
+(define-public ocaml-postgresql
+  (package
+    (name "ocaml-postgresql")
+    (version "5.0.0")
+    (source (origin
+              (method url-fetch)
+              (uri
+               "https://github.com/mmottl/postgresql-ocaml/releases/download/5.0.0/postgresql-5.0.0.tbz")
+              (sha256
+               (base32
+                "1n7rgrh6z9jzs2wj1mjys0q0y8q7gy1v00jik631v0d4y9dl1kcw"))))
+    (build-system dune-build-system)
+    (arguments
+     `(#:test-target "."))
+    (propagated-inputs (list dune-configurator))
+    (native-inputs (list postgresql))
+    (home-page "https://mmottl.github.io/postgresql-ocaml")
+    (synopsis "Bindings to the PostgreSQL library")
+    (description
+     "Postgresql offers library functions for accessing PostgreSQL databases.")
+    (license #f)))
+
+(define-public ocaml-sexp-diff
+  (package
+    (name "ocaml-sexp-diff")
+    (version "0.15.0")
+    (source (origin
+              (method url-fetch)
+              (uri
+               "https://ocaml.janestreet.com/ocaml-core/v0.15/files/sexp_diff-v0.15.0.tar.gz")
+              (sha256
+               (base32
+                "1q860bnbvmn5cnzbbi2ifspb0dilxgmy1j5p4yxiv0xhbp0dr55y"))))
+    (build-system dune-build-system)
+    (arguments
+     `(#:test-target "."))
+    (propagated-inputs (list ocaml-core ocaml-ppx-jane))
+    (properties `((upstream-name . "sexp_diff")))
+    (home-page "https://github.com/janestreet/sexp_diff")
+    (synopsis "Code for computing the diff of two sexps")
+    (description
+     " The code behind the [diff] subcommand of the Jane Street's [sexp] command line
+tool.")
+    (license license:expat)))
+
+(define ocaml-dune-private-libs
+  (package
+    (inherit dune)
+    (name "ocaml-dune-private-libs")
+    (build-system dune-build-system)
+    (arguments
+     `(#:package "dune-private-libs"
+                 #:tests? #f
+                 #:phases
+                 (modify-phases %standard-phases
+                   ;; When building dune, these directories are normally removed after
+                   ;; the bootstrap.
+                   (add-before 'build 'remove-vendor
+                     (lambda _
+                       (delete-file-recursively "vendor/csexp")
+                       (delete-file-recursively "vendor/pp"))))))
+    (propagated-inputs (list ocaml-csexp ocaml-pp ocaml-dyn ocaml-stdune))
+    (synopsis "Private libraries of Dune")
+    (description
+     "!!!!!!!!!!!!!!!!!!!!!! !!!!! DO NOT USE !!!!! !!!!!!!!!!!!!!!!!!!!!!
+
+This package contains code that is shared between various dune-xxx packages.
+However, it is not meant for public consumption and provides no stability
+guarantee.")))
+
+(define-public ocaml-dune-site
+  (package
+    (inherit dune)
+    (name "ocaml-dune-site")
+    (build-system dune-build-system)
+    (arguments
+     `(#:package "dune-site"
+                 #:tests? #f
+                 #:phases
+                 (modify-phases %standard-phases
+                   ;; When building dune, these directories are normally removed after
+                   ;; the bootstrap.
+                   (add-before 'build 'remove-vendor
+                     (lambda _
+                       (delete-file-recursively "vendor/csexp")
+                       (delete-file-recursively "vendor/pp"))))))
+    (propagated-inputs (list ocaml-dune-private-libs))
+    (synopsis "Embed locations informations inside executable and libraries")
+    (description #f)))
+
+(define-public ocaml-lwt-ppx
+  (package
+    (inherit ocaml-lwt)
+    (name "ocaml-lwt-ppx")
+    (version "2.1.0")
+    (build-system dune-build-system)
+    (arguments `(#:package "lwt_ppx"))
+    (propagated-inputs (list ocaml-lwt ocaml-ppxlib))
+    (properties `((upstream-name . "lwt_ppx")))
+    (synopsis
+     "PPX syntax for Lwt, providing something similar to async/await from JavaScript")
+    (description #f)))
